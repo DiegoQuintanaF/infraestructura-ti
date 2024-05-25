@@ -7,183 +7,183 @@ on:
     branches: ["deploy"]
 
 jobs:
-  build_customer_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_customer_frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/customer/front-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/customer/front-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
-  build_customer_backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_customer_backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/customer/back-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/customer/back-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
-  build_admin_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_admin_frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/admin/front-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/admin/front-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
-  build_admin_backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_admin_backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/admin/back-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/admin/back-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
   deploy_infra:
     runs-on: ubuntu-latest
-    needs:
-      [
-        build_customer_backend,
-        build_customer_frontend,
-        build_admin_backend,
-        build_admin_frontend,
-      ]
+    # needs:
+    #   [
+    #     build_customer_backend,
+    #     build_customer_frontend,
+    #     build_admin_backend,
+    #     build_admin_frontend,
+    #   ]
     outputs:
       customer_frontend_a: ${{ steps.apply.outputs.customer_frontend_a }}
       customer_frontend_b: ${{ steps.apply.outputs.customer_frontend_b }}
