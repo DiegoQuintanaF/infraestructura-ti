@@ -15,7 +15,7 @@ terraform {
     organization = "dquintana"
 
     workspaces {
-      name = "emovie_customer"
+      name = "emovie_ti"
     }
   }
 }
