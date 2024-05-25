@@ -9,10 +9,10 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "db_host" {
-  type        = string
-  description = "value of the db host"
-}
+# variable "db_host" {
+#   type        = string
+#   description = "value of the db host"
+# }
 
 variable "db_user" {
   type        = string
