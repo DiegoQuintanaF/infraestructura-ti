@@ -1,0 +1,27 @@
+services:
+  emovie-db:
+    image: postgres:16-alpine3.19
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/postgres/data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@email.com
+      PGADMIN_DEFAULT_PASSWORD: dev
+    volumes:
+      - ~/postgres/pgadmin-data:/var/lib/pgadmin 
+volumes:
+  emovie-db-data:
+    external: true
