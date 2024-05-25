@@ -78,7 +78,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          cd code/cutomer/back-end
+          cd code/customer/back-end
           docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
           docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
