@@ -7,157 +7,196 @@ on:
     branches: ["deploy"]
 
 jobs:
-  # build_customer_frontend:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-
-  #     - name: Git Semantic Version
-  #       uses: PaulHatch/semantic-version@v4.0.3
-  #       with:
-  #         major_pattern: "major:"
-  #         minor_pattern: "feat:"
-  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
-  #       id: version
-
-  #     - name: Docker Login
-  #       env:
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  #       run: |
-  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-
-  #     - name: Build Docker Image
-  #       env:
-  #         DOCKER_REPO: ${{ secrets.DOCKER_REPO_FRONTEND }}
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         NEW_VERSION: ${{ steps.version.outputs.version }}
-  #       run: |
-  #         cd customer/code/front_end
-  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
-
-  #     - name: Push Docker Image
-  #       env:
-  #         DOCKER_REPO: ${{ secrets.DOCKER_REPO_FRONTEND }}
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         NEW_VERSION: ${{ steps.version.outputs.version }}
-  #       run: |
-  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
-  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
-  # build_customer_backend:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-
-  #     - name: Git Semantic Version
-  #       uses: PaulHatch/semantic-version@v4.0.3
-  #       with:
-  #         major_pattern: "major:"
-  #         minor_pattern: "feat:"
-  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
-  #       id: version
-
-  #     - name: Docker Login
-  #       env:
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  #       run: |
-  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-
-  #     - name: Build Docker Image
-  #       env:
-  #         DOCKER_REPO: ${{ secrets.DOCKER_REPO_BACKEND }}
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         NEW_VERSION: ${{ steps.version.outputs.version }}
-  #       run: |
-  #         cd customer/code/back_end
-  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
-
-  #     - name: Push Docker Image
-  #       env:
-  #         DOCKER_REPO: ${{ secrets.DOCKER_REPO_BACKEND }}
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         NEW_VERSION: ${{ steps.version.outputs.version }}
-  #       run: |
-  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
-  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
-
-  # deploy_database:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     db_host: ${{ steps.extract.outputs.db_host }}
-
-  #   env:
-  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #     AWS_REGION: ${{ secrets.AWS_REGION }}
-  #     TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
-  #     TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
-  #     TF_VAR_db_name: ${{ secrets.DB_NAME }}
-  #     TF_VAR_db_port: ${{ secrets.DB_PORT }}
-  #     TF_VAR_provider_region: ${{ secrets.AWS_REGION }}
-
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup Terraform Database
-  #       uses: hashicorp/setup-terraform@v3
-  #       with:
-  #         cli_config_credentials_token: ${{ secrets.TF_CLOUD_API_TOKEN }}
-
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-region: ${{ secrets.AWS_REGION }}
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-
-  #     - name: get caller identity
-  #       run: |
-  #         aws sts get-caller-identity
-
-  #     - name: Terraform Init Database
-  #       id: init
-  #       run: |
-  #         cd database/terraform
-  #         terraform init -input=false
-
-  #     - name: Terraform Apply Database
-  #       id: extract
-  #       run: |
-  #         cd database/terraform
-  #         # sh
-  #         set -e
-
-  #         terraform apply -input=false -auto-approve
-  #         echo "db_host=$(terraform output -raw db_host)" >> $GITHUB_OUTPUT
-
-  deploy_custumer_app:
+  build_customer_frontend:
     runs-on: ubuntu-latest
-    # needs: [deploy_database, build_customer_backend, build_customer_frontend]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: "major:"
+          minor_pattern: "feat:"
+          format: "${major}.${minor}.${patch}-prerealese${increment}"
+        id: version
+
+      - name: Docker Login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd customer/code/front_end
+          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+
+      - name: Push Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker push $DOCKER_USER/$DOCKER_REPO:latest
+          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+
+  build_customer_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: "major:"
+          minor_pattern: "feat:"
+          format: "${major}.${minor}.${patch}-prerealese${increment}"
+        id: version
+
+      - name: Docker Login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd customer/code/back_end
+          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+
+      - name: Push Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker push $DOCKER_USER/$DOCKER_REPO:latest
+          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+
+  build_admin_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: "major:"
+          minor_pattern: "feat:"
+          format: "${major}.${minor}.${patch}-prerealese${increment}"
+        id: version
+
+      - name: Docker Login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd customer/code/front_end
+          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+
+      - name: Push Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker push $DOCKER_USER/$DOCKER_REPO:latest
+          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+
+  build_admin_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: "major:"
+          minor_pattern: "feat:"
+          format: "${major}.${minor}.${patch}-prerealese${increment}"
+        id: version
+
+      - name: Docker Login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd customer/code/back_end
+          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+
+      - name: Push Docker Image
+        env:
+          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker push $DOCKER_USER/$DOCKER_REPO:latest
+          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+
+  deploy_infra:
+    runs-on: ubuntu-latest
+    needs:
+      [
+        build_customer_backend,
+        build_customer_frontend,
+        build_admin_backend,
+        build_admin_frontend,
+      ]
     outputs:
-      # app_private_key: ${{ steps.apply.outputs.app_private_key }}
-      frontend_a: ${{ steps.apply.outputs.frontend_a }}
-      frontend_b: ${{ steps.apply.outputs.frontend_b }}
-      backend_a: ${{ steps.apply.outputs.backend_a }}
-      backend_b: ${{ steps.apply.outputs.backend_b }}
+      customer_frontend_a: ${{ steps.apply.outputs.customer_frontend_a }}
+      customer_frontend_b: ${{ steps.apply.outputs.customer_frontend_b }}
+      customer_backend_a: ${{ steps.apply.outputs.customer_backend_a }}
+      customer_backend_b: ${{ steps.apply.outputs.customer_backend_b }}
+      admin_frontend: ${{ steps.apply.outputs.admin_frontend }}
+      admin_backend: ${{ steps.apply.outputs.admin_backend }}
 
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION}}
       TF_VAR_provider_region: ${{ secrets.AWS_REGION }}
-      # TF_VAR_db_host: ${{ needs.deploy_database.outputs.db_host }}
-      TF_VAR_db_host: "9.9.9.9"
       TF_VAR_db_name: ${{ secrets.DB_NAME }}
       TF_VAR_db_user: ${{ secrets.DB_USERNAME }}
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
@@ -185,45 +224,61 @@ jobs:
       - name: Terraform Init App Customer
         id: init
         run: |
-          cd customer/terraform
+          cd terraform
           terraform init -input=false
 
       - name: Terraform Destroy App Customer
         run: |
-          cd customer/terraform
+          cd terraform
           set -e
           terraform destroy -input=false -auto-approve
 
       - name: Terraform Apply App Customer
+        env:
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         id: apply
         run: |
-          cd customer/terraform
+          cd terraform
+
+          echo "$PRIVATE_KEY" > ssh_key
+          echo "$PUBLIC_KEY" > ssh_key.pub
+          chmod 0600 ssh_key
+          chmod 0600 ssh_key.pub
           # sh
           set -e
 
           terraform apply -input=false -auto-approve
 
-          echo "frontend_a=$(terraform output -raw customer_vm_frontend_1_ip)" >> $GITHUB_OUTPUT
-          echo "frontend_b=$(terraform output -raw customer_vm_frontend_2_ip)" >> $GITHUB_OUTPUT
-          echo "backend_a=$(terraform output -raw customer_vm_backend_1_ip)" >> $GITHUB_OUTPUT
-          echo "backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
-        # echo $(terraform output -raw private_key) > "$(pwd)/../ansible/dependencies/private_key.pem"
+          echo "customer_frontend_a=$(terraform output -raw customer_vm_frontend_1_ip)" >> $GITHUB_OUTPUT
+          echo "customer_frontend_b=$(terraform output -raw customer_vm_frontend_2_ip)" >> $GITHUB_OUTPUT
+          echo "customer_backend_a=$(terraform output -raw customer_vm_backend_1_ip)" >> $GITHUB_OUTPUT
+          echo "customer_backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
+          echo "admin_frontend=$(terraform output -raw admin_vm_frontend_ip)" >> $GITHUB_OUTPUT
+          echo "admin_backend=$(terraform output -raw admin_vm_backend_ip)" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies Docker
         env:
-          FRONTEND_IP_1: ${{ steps.apply.outputs.frontend_a }}
-          FRONTEND_IP_2: ${{ steps.apply.outputs.frontend_b }}
-          BACKEND_IP_1: ${{ steps.apply.outputs.backend_a }}
-          BACKEND_IP_2: ${{ steps.apply.outputs.backend_b }}
-          # PRIVATE_KEY: ${{ steps.apply.outputs.app_private_key }}
-        run: |
-          cd customer/ansible/dependencies
+          FRONTEND_IP_1: ${{ steps.apply.outputs.customer_frontend_a }}
+          FRONTEND_IP_2: ${{ steps.apply.outputs.customer_frontend_b }}
+          BACKEND_IP_1: ${{ steps.apply.outputs.customer_backend_a }}
+          BACKEND_IP_2: ${{ steps.apply.outputs.customer_backend_b }}
+          ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
+          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
+        run: |
+          cd ansible/dependencies
+
+          echo "$PRIVATE_KEY" > private_key.pem
+          echo "$PUBLIC_KEY" > public_key.pem
           chmod 0600 private_key.pem
+          chmod 0600 public_key.pem
           cat private_key.pem
 
-          ansible-playbook -i "$FRONTEND_IP_1, $FRONTEND_IP_2, $BACKEND_IP_1, $BACKEND_IP_2," \
-          --private-key "$(pwd)/../private_key.pem" \
+          ansible-playbook -i "$FRONTEND_IP_1, $FRONTEND_IP_2, $BACKEND_IP_1, $BACKEND_IP_2, $ADMIN_BACKEND_IP, ADMIN_FRONTEND_IP" \
+          --private-key "private_key.pem" \
           playbook.yml \
           -e "ssh_user=ubuntu" \
           -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
