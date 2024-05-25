@@ -1,7 +1,7 @@
 FROM node:20-alpine3.19 as dev-deps
 WORKDIR /app
 COPY package.json package.json
-RUN npm i
+RUN npm install 
 
 
 FROM node:20-alpine3.19 as builder
