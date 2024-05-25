@@ -36,7 +36,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          cd code/customer/front_end
+          cd code/customer/front-end
           docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
           docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
@@ -78,7 +78,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          cd code/cutomer/back_end
+          cd code/cutomer/back-end
           docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
           docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
@@ -120,7 +120,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          cd code/admin/front_end
+          cd code/admin/front-end
           docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
           docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
@@ -162,7 +162,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          cd code/admin/back_end
+          cd code/admin/back-end
           docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
           docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
