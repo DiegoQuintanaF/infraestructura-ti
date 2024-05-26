@@ -233,52 +233,52 @@ jobs:
           set -e
           terraform destroy -input=false -auto-approve
 
-      - name: Terraform Apply App Customer
-        env:
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        id: apply
-        run: |
-          cd terraform
+      # - name: Terraform Apply App Customer
+      #   env:
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #   id: apply
+      #   run: |
+      #     cd terraform
 
-          echo "$PRIVATE_KEY" > ssh_key
-          echo "$PUBLIC_KEY" > ssh_key.pub
-          chmod 0600 ssh_key
-          chmod 0600 ssh_key.pub
-          # sh
-          set -e
+      #     echo "$PRIVATE_KEY" > ssh_key
+      #     echo "$PUBLIC_KEY" > ssh_key.pub
+      #     chmod 0600 ssh_key
+      #     chmod 0600 ssh_key.pub
+      #     # sh
+      #     set -e
 
-          terraform apply -input=false -auto-approve
+      #     terraform apply -input=false -auto-approve
 
-          echo "customer_frontend_a=$(terraform output -raw customer_vm_frontend_1_ip)" >> $GITHUB_OUTPUT
-          echo "customer_frontend_b=$(terraform output -raw customer_vm_frontend_2_ip)" >> $GITHUB_OUTPUT
-          echo "customer_backend_a=$(terraform output -raw customer_vm_backend_1_ip)" >> $GITHUB_OUTPUT
-          echo "customer_backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
-          echo "admin_frontend=$(terraform output -raw admin_vm_frontend_ip)" >> $GITHUB_OUTPUT
-          echo "admin_backend=$(terraform output -raw admin_vm_backend_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_frontend_a=$(terraform output -raw customer_vm_frontend_1_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_frontend_b=$(terraform output -raw customer_vm_frontend_2_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_backend_a=$(terraform output -raw customer_vm_backend_1_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
+      #     echo "admin_frontend=$(terraform output -raw admin_vm_frontend_ip)" >> $GITHUB_OUTPUT
+      #     echo "admin_backend=$(terraform output -raw admin_vm_backend_ip)" >> $GITHUB_OUTPUT
 
-      - name: Install Dependencies Docker
-        env:
-          FRONTEND_IP_1: ${{ steps.apply.outputs.customer_frontend_a }}
-          FRONTEND_IP_2: ${{ steps.apply.outputs.customer_frontend_b }}
-          BACKEND_IP_1: ${{ steps.apply.outputs.customer_backend_a }}
-          BACKEND_IP_2: ${{ steps.apply.outputs.customer_backend_b }}
-          ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
-          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Install Dependencies Docker
+      #   env:
+      #     FRONTEND_IP_1: ${{ steps.apply.outputs.customer_frontend_a }}
+      #     FRONTEND_IP_2: ${{ steps.apply.outputs.customer_frontend_b }}
+      #     BACKEND_IP_1: ${{ steps.apply.outputs.customer_backend_a }}
+      #     BACKEND_IP_2: ${{ steps.apply.outputs.customer_backend_b }}
+      #     ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
+      #     ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-        run: |
-          cd ansible/dependencies
+      #   run: |
+      #     cd ansible/dependencies
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
-          cat private_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
+      #     cat private_key.pem
 
-          ansible-playbook -i "$FRONTEND_IP_1, $FRONTEND_IP_2, $BACKEND_IP_1, $BACKEND_IP_2, $ADMIN_BACKEND_IP, ADMIN_FRONTEND_IP" \
-          --private-key "private_key.pem" \
-          playbook.yml \
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+      #     ansible-playbook -i "$FRONTEND_IP_1, $FRONTEND_IP_2, $BACKEND_IP_1, $BACKEND_IP_2, $ADMIN_BACKEND_IP, $ADMIN_FRONTEND_IP" \
+      #     --private-key "private_key.pem" \
+      #     playbook.yml \
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
