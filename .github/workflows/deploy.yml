@@ -224,6 +224,8 @@ jobs:
         run: |
           cd terraform
 
+          touch ssh_key
+          touch ssh_key.pub
           echo "$PRIVATE_KEY" > ssh_key
           echo "$PUBLIC_KEY" > ssh_key.pub
           chmod 0600 ssh_key
