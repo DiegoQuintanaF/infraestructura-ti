@@ -191,6 +191,7 @@ jobs:
       customer_backend_b: ${{ steps.apply.outputs.customer_backend_b }}
       admin_frontend: ${{ steps.apply.outputs.admin_frontend }}
       admin_backend: ${{ steps.apply.outputs.admin_backend }}
+      db_host: ${{ steps.apply.outputs.db_host }}
 
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -264,6 +265,7 @@ jobs:
           echo "customer_backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
           echo "admin_frontend=$(terraform output -raw admin_vm_frontend_ip)" >> $GITHUB_OUTPUT
           echo "admin_backend=$(terraform output -raw admin_vm_backend_ip)" >> $GITHUB_OUTPUT
+          echo "db_host=$(terraform output -raw db_host)" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies Docker
         env:
@@ -290,3 +292,122 @@ jobs:
           playbook.yml \
           -e "ssh_user=ubuntu" \
           -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+
+      - name: Deploy admin backend
+        env:
+          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_HOST: ${{ steps.apply.outputs.db_host }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USERNAME }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          cd ansible/back-end
+
+          echo "$PRIVATE_KEY" > private_key.pem
+          echo "$PUBLIC_KEY" > public_key.pem
+          chmod 0600 private_key.pem
+          chmod 0600 public_key.pem
+          cat private_key.pem
+
+          ansible-playbook -i "$ADMIN_BACKEND_IP, "  \
+          --private-key "private_key.pem" \
+          admin.yml 
+          -e "ssh_user=ubuntu" \
+          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+          -e "STAGE=prod HOST_API=$ADMIN_BACKEND_IP/api/v1 PORT=3000 DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME DB_HOST=$DB_HOST DB_PORT=$DB_HOST DB_USER=$DB_USER JWT_SECRET=219186f168fb67adc8bc6dde0dbea4627e595825d467dc7f0e88100a7de1fbb8 BCRYPT_SALT=10 TMDB_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTE5MGIyZjJlNjgyMjg0MDBlMTc1MmNjYWNlNWU5ZCIsInN1YiI6IjYzZTU0MmFmZGI0ZWQ2MDBkYjVlOTRjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VIPSgFic4MVM1ye7LZip93pJdBh9q4UFEkNOppKW-Z0"
+
+      - name: Deploy admin frontend
+        env:
+          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+          ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          cd ansible/front-end
+
+          echo "$PRIVATE_KEY" > private_key.pem
+          echo "$PUBLIC_KEY" > public_key.pem
+          chmod 0600 private_key.pem
+          chmod 0600 public_key.pem
+          cat private_key.pem
+
+          ansible-playbook -i "$ADMIN_FRONTEND_IP, "  \
+          --private-key "private_key.pem" \
+          admin.yml 
+          -e "ssh_user=ubuntu" \
+          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+          -e "API_URL=$ADMIN_BACKEND_IP/api/v1"
+
+      - name: Deploy custumer backend
+        env:
+          CUSTOMER_BACKEND_A_IP: ${{ steps.apply.outputs.customer_backend_a }}
+          CUSTOMER_BACKEND_B_IP: ${{ steps.apply.outputs.customer_backend_b }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_HOST: ${{ steps.apply.outputs.db_host }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USERNAME }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          cd ansible/back-end
+
+          echo "$PRIVATE_KEY" > private_key.pem
+          echo "$PUBLIC_KEY" > public_key.pem
+          chmod 0600 private_key.pem
+          chmod 0600 public_key.pem
+          cat private_key.pem
+
+          ansible-playbook -i "$CUSTOMER_BACKEND_A_IP, $CUSTOMER_BACKEND_B_IP"   \
+          --private-key "private_key.pem" \
+          customer.yml
+          -e "ssh_user=ubuntu" \
+          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no' \
+          -e "STAGE=prod HOST_API=$ADMIN_BACKEND_IP/api/v1 PORT=3001 DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME DB_HOST=$DB_HOST DB_PORT=$DB_HOST DB_USER=$DB_USER JWT_SECRET=219186f168fb67adc8bc6dde0dbea4627e595825d467dc7f0e88100a7de1fbb8 BCRYPT_SALT=10 TMDB_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTE5MGIyZjJlNjgyMjg0MDBlMTc1MmNjYWNlNWU5ZCIsInN1YiI6IjYzZTU0MmFmZGI0ZWQ2MDBkYjVlOTRjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VIPSgFic4MVM1ye7LZip93pJdBh9q4UFEkNOppKW-Z0"
+
+      - name: Deploy customer frontend a
+        env:
+          CUSTOMER_BACKEND_A_IP: ${{ steps.apply.outputs.customer_backend_a }}
+          CUSTOMER_FRONTEND_A_IP: ${{ steps.apply.outputs.customer_frontend_a }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          cd ansible/front-end
+
+          echo "$PRIVATE_KEY" > private_key.pem
+          echo "$PUBLIC_KEY" > public_key.pem
+          chmod 0600 private_key.pem
+          chmod 0600 public_key.pem
+          cat private_key.pem
+
+          ansible-playbook -i "$CUSTOMER_FRONTEND_A_IP, "  \
+          --private-key "private_key.pem" \
+          customer.yml 
+          -e "ssh_user=ubuntu" \
+          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+          -e "API_URL=$CUSTOMER_BACKEND_A_IP/api/v1"
+
+      - name: Deploy customer frontend b
+        env:
+          CUSTOMER_BACKEND_B_IP: ${{ steps.apply.outputs.customer_backend_b }}
+          CUSTOMER_FRONTEND_B_IP: ${{ steps.apply.outputs.customer_frontend_b }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          cd ansible/front-end
+
+          echo "$PRIVATE_KEY" > private_key.pem
+          echo "$PUBLIC_KEY" > public_key.pem
+          chmod 0600 private_key.pem
+          chmod 0600 public_key.pem
+          cat private_key.pem
+
+          ansible-playbook -i "$CUSTOMER_FRONTEND_B_IP, "  \
+          --private-key "private_key.pem" \
+          customer.yml 
+          -e "ssh_user=ubuntu" \
+          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+          -e "API_URL=$CUSTOMER_BACKEND_B_IP/api/v1"

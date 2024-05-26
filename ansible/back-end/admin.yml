@@ -1,0 +1,55 @@
+---
+- name: Deploy Docker container for admin app backend
+  hosts: all
+  become: yes
+
+  vars:
+    docker_image: "dquintanaf/admin_app_backend"
+    container_name: "app_app_backend"
+
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+      become: yes
+
+    - name: Ensure Docker service is started
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Pull the Docker image
+      docker_image:
+        name: "{{ docker_image }}"
+        source: pull
+
+    - name: Run the Docker container
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ docker_image }}"
+        state: started
+        restart_policy: always
+        env:
+          STAGE: "{{ STAGE }}"
+          HOST_API: "{{ HOST_API }}"
+          PORT: "{{ PORT }}"
+          DB_PASSWORD: "{{ DB_PASSWORD }}"
+          DB_NAME: "{{ DB_NAME }}"
+          DB_HOST: "{{ DB_HOST }}"
+          DB_PORT: "{{ DB_PORT }}"
+          DB_USER: "{{ DB_USER }}"
+          JWT_SECRET: "{{ JWT_SECRET }}"
+          BCRYPT_SALT: "{{ BCRYPT_SALT }}"
+          TMDB_API_TOKEN: "{{ TMDB_API_TOKEN }}"
+        ports:
+          - "80:3000"
+
+    - name: Verify the container is running
+      command: docker ps
+      register: result
+
+    - name: Debug container status
+      debug:
+        var: result.stdout
