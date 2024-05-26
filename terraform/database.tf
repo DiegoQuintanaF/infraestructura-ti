@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "db_subnet_group"
-  subnet_ids = [aws_subnet.customer_public_subnet_a.cidr_block, aws_subnet.customer_public_subnet_b.cidr_block]
+  subnet_ids = [aws_subnet.customer_public_subnet_a.id, aws_subnet.customer_public_subnet_b.id, aws_subnet.admin_public_subnet_c.id]
 
 }
 

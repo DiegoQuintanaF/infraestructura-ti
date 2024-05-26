@@ -227,11 +227,11 @@ jobs:
           cd terraform
           terraform init -input=false
 
-      # - name: Terraform Destroy App Customer
-      #   run: |
-      #     cd terraform
-      #     set -e
-      #     terraform destroy -input=false -auto-approve
+      - name: Terraform Destroy App Customer
+        run: |
+          cd terraform
+          set -e
+          terraform destroy -input=false -auto-approve
 
       - name: Terraform Apply App Customer
         env:
