@@ -97,7 +97,6 @@ resource "aws_instance" "customer_vm_frontend_2" {
   key_name               = aws_key_pair.generated_key.key_name
   vpc_security_group_ids = [aws_security_group.customer_sg.id]
   subnet_id              = aws_subnet.customer_public_subnet_b.id
-  # user_data              = file("userdata.tpl")
 
 
   root_block_device {
@@ -113,7 +112,6 @@ resource "aws_instance" "customer_vm_backend_1" {
   key_name               = aws_key_pair.generated_key.key_name
   vpc_security_group_ids = [aws_security_group.customer_sg.id]
   subnet_id              = aws_subnet.customer_public_subnet_a.id
-  # user_data              = file("userdata.tpl")
 
   root_block_device {
     volume_size = 10
@@ -126,7 +124,7 @@ resource "aws_instance" "customer_vm_backend_2" {
   key_name               = aws_key_pair.generated_key.key_name
   vpc_security_group_ids = [aws_security_group.customer_sg.id]
   subnet_id              = aws_subnet.customer_public_subnet_b.id
-  # user_data              = file("userdata.tpl")
+
   root_block_device {
     volume_size = 10
   }
