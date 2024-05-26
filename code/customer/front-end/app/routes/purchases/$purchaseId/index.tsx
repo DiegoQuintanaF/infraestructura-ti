@@ -1,5 +1,4 @@
 import { useParams } from '@remix-run/react'
-import QRCode from 'react-qr-code'
 
 export default function Login() {
   const { purchaseId } = useParams()
@@ -8,7 +7,6 @@ export default function Login() {
       {purchaseId != undefined && (
         <>
           <p>Detalles {purchaseId}</p>
-          <QRCode value={'Hola'} />
         </>
       )}
     </div>
