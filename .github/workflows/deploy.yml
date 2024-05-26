@@ -221,6 +221,9 @@ jobs:
         run: |
           aws sts get-caller-identity
       - name: Create SSH Keys
+        env:
+          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           cd terraform
 
