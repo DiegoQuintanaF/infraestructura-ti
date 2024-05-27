@@ -7,183 +7,183 @@ on:
     branches: ["deploy"]
 
 jobs:
-  build_customer_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_customer_frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/customer/front-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/customer/front-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
-  build_customer_backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_customer_backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/customer/back-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/customer/back-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_CUSTOMER_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
-  build_admin_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_admin_frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/admin/front-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/admin/front-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_FRONTEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
-  build_admin_backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # build_admin_backend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-prerealese${increment}"
-        id: version
+  #     - name: Git Semantic Version
+  #       uses: PaulHatch/semantic-version@v4.0.3
+  #       with:
+  #         major_pattern: "major:"
+  #         minor_pattern: "feat:"
+  #         format: "${major}.${minor}.${patch}-prerealese${increment}"
+  #       id: version
 
-      - name: Docker Login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #     - name: Docker Login
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       run: |
+  #         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          cd code/admin/back-end
-          docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
-          docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
+  #     - name: Build Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         cd code/admin/back-end
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:latest .
+  #         docker build -t $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION .
 
-      - name: Push Docker Image
-        env:
-          DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          docker push $DOCKER_USER/$DOCKER_REPO:latest
-          docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
+  #     - name: Push Docker Image
+  #       env:
+  #         DOCKER_REPO: ${{ secrets.DOCKER_ADMIN_BACKEND }}
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         NEW_VERSION: ${{ steps.version.outputs.version }}
+  #       run: |
+  #         docker push $DOCKER_USER/$DOCKER_REPO:latest
+  #         docker push $DOCKER_USER/$DOCKER_REPO:$NEW_VERSION
 
   deploy_infra:
     runs-on: ubuntu-latest
-    needs:
-      [
-        build_customer_backend,
-        build_customer_frontend,
-        build_admin_backend,
-        build_admin_frontend,
-      ]
+    # needs:
+    #   [
+    #     build_customer_backend,
+    #     build_customer_frontend,
+    #     build_admin_backend,
+    #     build_admin_frontend,
+    #   ]
     outputs:
       customer_frontend_a: ${{ steps.apply.outputs.customer_frontend_a }}
       customer_frontend_b: ${{ steps.apply.outputs.customer_frontend_b }}
@@ -247,161 +247,161 @@ jobs:
           set -e
           terraform destroy -input=false -auto-approve
 
-      - name: Terraform Apply App Customer
-        env:
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        id: apply
-        run: |
-          cd terraform
-          # sh
-          set -e
+      # - name: Terraform Apply App Customer
+      #   env:
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #   id: apply
+      #   run: |
+      #     cd terraform
+      #     # sh
+      #     set -e
 
-          terraform apply -input=false -auto-approve
+      #     terraform apply -input=false -auto-approve
 
-          echo "customer_frontend_a=$(terraform output -raw customer_vm_frontend_1_ip)" >> $GITHUB_OUTPUT
-          echo "customer_frontend_b=$(terraform output -raw customer_vm_frontend_2_ip)" >> $GITHUB_OUTPUT
-          echo "customer_backend_a=$(terraform output -raw customer_vm_backend_1_ip)" >> $GITHUB_OUTPUT
-          echo "customer_backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
-          echo "admin_frontend=$(terraform output -raw admin_vm_frontend_ip)" >> $GITHUB_OUTPUT
-          echo "admin_backend=$(terraform output -raw admin_vm_backend_ip)" >> $GITHUB_OUTPUT
-          echo "db_host=$(terraform output -raw db_host)" >> $GITHUB_OUTPUT
+      #     echo "customer_frontend_a=$(terraform output -raw customer_vm_frontend_1_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_frontend_b=$(terraform output -raw customer_vm_frontend_2_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_backend_a=$(terraform output -raw customer_vm_backend_1_ip)" >> $GITHUB_OUTPUT
+      #     echo "customer_backend_b=$(terraform output -raw customer_vm_backend_2_ip)" >> $GITHUB_OUTPUT
+      #     echo "admin_frontend=$(terraform output -raw admin_vm_frontend_ip)" >> $GITHUB_OUTPUT
+      #     echo "admin_backend=$(terraform output -raw admin_vm_backend_ip)" >> $GITHUB_OUTPUT
+      #     echo "db_host=$(terraform output -raw db_host)" >> $GITHUB_OUTPUT
 
-      - name: Install Dependencies Docker
-        env:
-          FRONTEND_IP_1: ${{ steps.apply.outputs.customer_frontend_a }}
-          FRONTEND_IP_2: ${{ steps.apply.outputs.customer_frontend_b }}
-          BACKEND_IP_1: ${{ steps.apply.outputs.customer_backend_a }}
-          BACKEND_IP_2: ${{ steps.apply.outputs.customer_backend_b }}
-          ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
-          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Install Dependencies Docker
+      #   env:
+      #     FRONTEND_IP_1: ${{ steps.apply.outputs.customer_frontend_a }}
+      #     FRONTEND_IP_2: ${{ steps.apply.outputs.customer_frontend_b }}
+      #     BACKEND_IP_1: ${{ steps.apply.outputs.customer_backend_a }}
+      #     BACKEND_IP_2: ${{ steps.apply.outputs.customer_backend_b }}
+      #     ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
+      #     ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-        run: |
-          cd ansible/dependencies
+      #   run: |
+      #     cd ansible/dependencies
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
 
-          ansible-playbook -i "$FRONTEND_IP_1, $FRONTEND_IP_2, $BACKEND_IP_1, $BACKEND_IP_2, $ADMIN_BACKEND_IP, $ADMIN_FRONTEND_IP" \
-          --private-key "private_key.pem" \
-          playbook.yml \
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+      #     ansible-playbook -i "$FRONTEND_IP_1, $FRONTEND_IP_2, $BACKEND_IP_1, $BACKEND_IP_2, $ADMIN_BACKEND_IP, $ADMIN_FRONTEND_IP" \
+      #     --private-key "private_key.pem" \
+      #     playbook.yml \
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
 
-      - name: Deploy admin backend
-        env:
-          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_HOST: ${{ steps.apply.outputs.db_host }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_USER: ${{ secrets.DB_USERNAME }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-        run: |
-          cd ansible/back-end
+      # - name: Deploy admin backend
+      #   env:
+      #     ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+      #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      #     DB_NAME: ${{ secrets.DB_NAME }}
+      #     DB_HOST: ${{ steps.apply.outputs.db_host }}
+      #     DB_PORT: ${{ secrets.DB_PORT }}
+      #     DB_USER: ${{ secrets.DB_USERNAME }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #   run: |
+      #     cd ansible/back-end
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
 
-          ansible-playbook -i "$ADMIN_BACKEND_IP, "  \
-          --private-key "private_key.pem" \
-          admin.yml 
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
-          -e "STAGE=prod HOST_API=$ADMIN_BACKEND_IP/api/v1 PORT=3000 DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME DB_HOST=$DB_HOST DB_PORT=$DB_HOST DB_USER=$DB_USER JWT_SECRET=219186f168fb67adc8bc6dde0dbea4627e595825d467dc7f0e88100a7de1fbb8 BCRYPT_SALT=10 TMDB_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTE5MGIyZjJlNjgyMjg0MDBlMTc1MmNjYWNlNWU5ZCIsInN1YiI6IjYzZTU0MmFmZGI0ZWQ2MDBkYjVlOTRjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VIPSgFic4MVM1ye7LZip93pJdBh9q4UFEkNOppKW-Z0"
+      #     ansible-playbook -i "$ADMIN_BACKEND_IP, "  \
+      #     --private-key "private_key.pem" \
+      #     admin.yml 
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+      #     -e "STAGE=prod HOST_API=$ADMIN_BACKEND_IP/api/v1 PORT=3000 DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME DB_HOST=$DB_HOST DB_PORT=$DB_HOST DB_USER=$DB_USER JWT_SECRET=219186f168fb67adc8bc6dde0dbea4627e595825d467dc7f0e88100a7de1fbb8 BCRYPT_SALT=10 TMDB_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTE5MGIyZjJlNjgyMjg0MDBlMTc1MmNjYWNlNWU5ZCIsInN1YiI6IjYzZTU0MmFmZGI0ZWQ2MDBkYjVlOTRjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VIPSgFic4MVM1ye7LZip93pJdBh9q4UFEkNOppKW-Z0"
 
-      - name: Deploy admin frontend
-        env:
-          ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
-          ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-        run: |
-          cd ansible/front-end
+      # - name: Deploy admin frontend
+      #   env:
+      #     ADMIN_BACKEND_IP: ${{ steps.apply.outputs.admin_backend }}
+      #     ADMIN_FRONTEND_IP: ${{ steps.apply.outputs.admin_frontend }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #   run: |
+      #     cd ansible/front-end
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
 
-          ansible-playbook -i "$ADMIN_FRONTEND_IP, "  \
-          --private-key "private_key.pem" \
-          admin.yml 
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
-          -e "API_URL=$ADMIN_BACKEND_IP/api/v1"
+      #     ansible-playbook -i "$ADMIN_FRONTEND_IP, "  \
+      #     --private-key "private_key.pem" \
+      #     admin.yml 
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+      #     -e "API_URL=$ADMIN_BACKEND_IP/api/v1"
 
-      - name: Deploy custumer backend
-        env:
-          CUSTOMER_BACKEND_A_IP: ${{ steps.apply.outputs.customer_backend_a }}
-          CUSTOMER_BACKEND_B_IP: ${{ steps.apply.outputs.customer_backend_b }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_HOST: ${{ steps.apply.outputs.db_host }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_USER: ${{ secrets.DB_USERNAME }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-        run: |
-          cd ansible/back-end
+      # - name: Deploy custumer backend
+      #   env:
+      #     CUSTOMER_BACKEND_A_IP: ${{ steps.apply.outputs.customer_backend_a }}
+      #     CUSTOMER_BACKEND_B_IP: ${{ steps.apply.outputs.customer_backend_b }}
+      #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      #     DB_NAME: ${{ secrets.DB_NAME }}
+      #     DB_HOST: ${{ steps.apply.outputs.db_host }}
+      #     DB_PORT: ${{ secrets.DB_PORT }}
+      #     DB_USER: ${{ secrets.DB_USERNAME }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #   run: |
+      #     cd ansible/back-end
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
 
-          ansible-playbook -i "$CUSTOMER_BACKEND_A_IP, $CUSTOMER_BACKEND_B_IP"   \
-          --private-key "private_key.pem" \
-          customer.yml
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
-          -e "STAGE=prod HOST_API=$ADMIN_BACKEND_IP/api/v1 PORT=3001 DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME DB_HOST=$DB_HOST DB_PORT=$DB_HOST DB_USER=$DB_USER JWT_SECRET=219186f168fb67adc8bc6dde0dbea4627e595825d467dc7f0e88100a7de1fbb8 BCRYPT_SALT=10 TMDB_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTE5MGIyZjJlNjgyMjg0MDBlMTc1MmNjYWNlNWU5ZCIsInN1YiI6IjYzZTU0MmFmZGI0ZWQ2MDBkYjVlOTRjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VIPSgFic4MVM1ye7LZip93pJdBh9q4UFEkNOppKW-Z0"
+      #     ansible-playbook -i "$CUSTOMER_BACKEND_A_IP, $CUSTOMER_BACKEND_B_IP"   \
+      #     --private-key "private_key.pem" \
+      #     customer.yml
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+      #     -e "STAGE=prod HOST_API=$ADMIN_BACKEND_IP/api/v1 PORT=3001 DB_PASSWORD=$DB_PASSWORD DB_NAME=$DB_NAME DB_HOST=$DB_HOST DB_PORT=$DB_HOST DB_USER=$DB_USER JWT_SECRET=219186f168fb67adc8bc6dde0dbea4627e595825d467dc7f0e88100a7de1fbb8 BCRYPT_SALT=10 TMDB_API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTE5MGIyZjJlNjgyMjg0MDBlMTc1MmNjYWNlNWU5ZCIsInN1YiI6IjYzZTU0MmFmZGI0ZWQ2MDBkYjVlOTRjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VIPSgFic4MVM1ye7LZip93pJdBh9q4UFEkNOppKW-Z0"
 
-      - name: Deploy customer frontend a
-        env:
-          CUSTOMER_BACKEND_A_IP: ${{ steps.apply.outputs.customer_backend_a }}
-          CUSTOMER_FRONTEND_A_IP: ${{ steps.apply.outputs.customer_frontend_a }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-        run: |
-          cd ansible/front-end
+      # - name: Deploy customer frontend a
+      #   env:
+      #     CUSTOMER_BACKEND_A_IP: ${{ steps.apply.outputs.customer_backend_a }}
+      #     CUSTOMER_FRONTEND_A_IP: ${{ steps.apply.outputs.customer_frontend_a }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #   run: |
+      #     cd ansible/front-end
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
 
-          ansible-playbook -i "$CUSTOMER_FRONTEND_A_IP, "  \
-          --private-key "private_key.pem" \
-          customer.yml 
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
-          -e "API_URL=$CUSTOMER_BACKEND_A_IP/api/v1"
+      #     ansible-playbook -i "$CUSTOMER_FRONTEND_A_IP, "  \
+      #     --private-key "private_key.pem" \
+      #     customer.yml 
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+      #     -e "API_URL=$CUSTOMER_BACKEND_A_IP/api/v1"
 
-      - name: Deploy customer frontend b
-        env:
-          CUSTOMER_BACKEND_B_IP: ${{ steps.apply.outputs.customer_backend_b }}
-          CUSTOMER_FRONTEND_B_IP: ${{ steps.apply.outputs.customer_frontend_b }}
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-        run: |
-          cd ansible/front-end
+      # - name: Deploy customer frontend b
+      #   env:
+      #     CUSTOMER_BACKEND_B_IP: ${{ steps.apply.outputs.customer_backend_b }}
+      #     CUSTOMER_FRONTEND_B_IP: ${{ steps.apply.outputs.customer_frontend_b }}
+      #     PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+      #   run: |
+      #     cd ansible/front-end
 
-          echo "$PRIVATE_KEY" > private_key.pem
-          echo "$PUBLIC_KEY" > public_key.pem
-          chmod 0600 private_key.pem
-          chmod 0600 public_key.pem
+      #     echo "$PRIVATE_KEY" > private_key.pem
+      #     echo "$PUBLIC_KEY" > public_key.pem
+      #     chmod 0600 private_key.pem
+      #     chmod 0600 public_key.pem
 
-          ansible-playbook -i "$CUSTOMER_FRONTEND_B_IP, "  \
-          --private-key "private_key.pem" \
-          customer.yml 
-          -e "ssh_user=ubuntu" \
-          -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
-          -e "API_URL=$CUSTOMER_BACKEND_B_IP/api/v1"
+      #     ansible-playbook -i "$CUSTOMER_FRONTEND_B_IP, "  \
+      #     --private-key "private_key.pem" \
+      #     customer.yml 
+      #     -e "ssh_user=ubuntu" \
+      #     -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" \
+      #     -e "API_URL=$CUSTOMER_BACKEND_B_IP/api/v1"
